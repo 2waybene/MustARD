@@ -3,6 +3,8 @@
 ##  credit: https://www.r-bloggers.com/converting-mouse-to-human-gene-names-with-biomart-package/
 ##=====================================================================================================
 source ("x:/project2020/MustARD/Rscripts/utils.R")
+source("x:/R-project/customPackages/plotTools.R")
+source("x:/R-project/customPackages/dataManipTools.R")
 
 ##============================
 ##  
@@ -67,10 +69,6 @@ length(intersect(as.character(humanNrf2High$GeneName), hsGenes_mmEsGeneSets))
 #[1] 58
 length(intersect(as.character(humanNrf2High$GeneName), as.character(ESCC_hit_gene_sets$FitAny)))
 #[1] 42
-
-source("x:/R-project/customPackages/plotTools.R")
-source("x:/R-project/customPackages/dataManipTools.R")
-
 
 
 VennDiagram <- draw.three.list.venndigram(as.character(humanNrf2High$GeneName),hsGenes_mmEsGeneSets, as.character(ESCC_hit_gene_sets$FitAny),

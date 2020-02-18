@@ -1,0 +1,117 @@
+---
+title: 'This is a note to dissect gmt file'
+author: 'Jianying Li'
+date: '24 October 2016'
+params:
+  dbFile: gmtFile
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    fig_width: 7
+    fig_height: 4.5
+    theme: readable
+    highlight: tango
+---
+
+```{r , message=FALSE, warning=FALSE}
+print ("This is gene set file\n")
+print (params$dbFile)
+print ("\n")
+
+library(GSA)
+setwd("x:/project2016/GSA_by_R/")
+set.seed(1234567)
+```
+
+
+Custom functions
+```{r , message=FALSE, warning=FALSE}
+clean.gmt.data <- function (db)
+{
+  temp.geneset <- c(list())
+  for (i in 1:length(db$genesets))
+  {
+    temp.geneset[[i]] <- db$genesets[[i]]
+    if (length(which(temp.geneset[[i]]=="")) > 0 )
+    {
+      temp.geneset[[i]]  <- temp.geneset[[i]][-which(temp.geneset[[i]]=="")]
+    }
+  }
+  db$genesets <- temp.geneset 
+  return (db)
+}
+
+
+
+```
+
+
+Read in Microarray file
+```{r, message=FALSE, warning=FALSE}
+x1 <- read.csv("NormedMicroarray.csv")
+str(matrix(rnorm(1000*9),ncol=9))
+x <- x1[3:10]
+y <- c(rep(1, 4), rep(2, 4))
+y
+
+str(x)
+
+z <- x1
+#Make "Gene name" as string
+z$X <- as.character(z$X)
+str(z)
+
+#Make "Gene symbol"" as string
+z$GeneSymbol <- as.character(z$GeneSymbol)
+str(z)
+
+```
+
+Now that our packages are loaded, let's read in and take a peek at the data.
+
+```{r, message=FALSE, warning=FALSE}
+
+
+
+#c1 <- GSA.read.gmt(params$dbFile)
+c1 <- GSA.read.gmt("cleaningData/Knowledge_based_gene_sets_20161005.gmt")
+c1 <- GSA.read.gmt("cleaningData/temp2.txt")
+
+str(c1)
+str(c1$genesets)
+
+#c1$genesets[18]
+print ("Gene sets in database file")
+c1$geneset.names
+
+
+```
+
+
+Clean the gene sets
+```{r,  message=FALSE, warning=FALSE}
+
+#Use cleaned genesets
+c1.cleaned <- clean.gmt.data(c1)
+str(c1.cleaned$genesets)
+c1 <- c1.cleaned
+str(c1$genesets)
+
+
+```
+
+
+Fit GSA model
+```{r, results = 'hide', message=FALSE, warning=FALSE}
+
+gsafit <- GSA(x, y, c1$genesets, z$GeneSymbol, resp.type = "Two class unpaired", nperms = 1000)
+
+```
+
+Printing the GSA results
+
+```{r, message=FALSE, warning=FALSE}
+print(GSA.listsets(gsafit, c1$geneset.names, FDRcut=.5))
+
+```
