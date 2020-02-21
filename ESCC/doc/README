@@ -1,0 +1,12 @@
+This folder contains basic document related to this project. 
+
+There are a few dataFiles that cannot be controled via github, we keep them off line:
+
+-rw-r--r--@ 1 li11  1360859114  497729325 Feb 17 19:51 CCLE_RNAseq_ExonUsageRatio_20180929.gct.gz
+-rw-r--r--@ 1 li11  1360859114  567184554 Feb 17 20:04 CCLE_RNAseq_ExonUsageRatio_denominatorCnt_20180929.gct.gz
+-rw-r--r--  1 li11  1360859114  688808874 Feb 17 19:53 CCLE_RNAseq_genes_rpkm_20180929.gct
+-rw-r--r--@ 1 li11  1360859114   66221681 Feb 17 19:53 CCLE_RNAseq_rsem_genes_tpm_20180929.txt.gz
+-rw-r--r--@ 1 li11  1360859114  231207098 Feb 17 19:55 CCLE_RNAseq_rsem_transcripts_tpm_20180929.txt.gz
+-rw-r--r--@ 1 li11  1360859114      89323 Feb 17 19:10 ESCC cell lines.xlsx
+-rw-r--r--@ 1 li11  1360859114        165 Feb 17 19:11 ~$ESCC cell lines.xlsx
+
