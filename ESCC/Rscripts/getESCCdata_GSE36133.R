@@ -2,8 +2,13 @@
 # R scripts generated  Tue Feb 25 16:09:14 EST 2020
 
 ################################################################
+
+
+##====================================================
+##  limma fitting
 #   Differential expression analysis with limma
-library(Biobase)
+##====================================================
+
 library(GEOquery)
 library(limma)
 
@@ -19,22 +24,22 @@ fvarLabels(gset) <- make.names(fvarLabels(gset))
 # group names for all samples
 gsms <- paste0("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXX1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+               "XXXXXXXXXX1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+               "XXXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXX0000000000XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+               "XXXXXXXXXXXX1111111111XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX11XXXXXXXX",
+               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX00XXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXX00000X00X000XXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXX",
+               "XXXXXX11111X11X111XXXXXXXXXX1XXXXXXXXXXXXXXXXXXXXX",
                "XXXXXXXXXXXXXXXXX")
 sml <- c()
 for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
@@ -66,56 +71,25 @@ fit2 <- eBayes(fit2, 0.01)
 tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 
 tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","ORF"))
-write.table(tT, file=stdout(), row.names=F, sep="\t")
+head(tT)
+save(tT,file= "x:/project2020/MustARD/ESCC/workingWithMicroarray_GSE36133_CCLE/ESCC_GSE36133_limma_SSCC_vs_others.rda")
 
+length(tT$adj.P.Val < 0.05)
+#250
 
-################################################################
+length(tT$adj.P.Val < 0.05 & abs(tT$logFC) >=2)
+#[1] 250
+
+##=========================================
 #   Boxplot for selected GEO samples
+#   Boxplot for selected GEO samples
+##========================================
 library(Biobase)
-library(GEOquery)
-
-# load series and platform data from GEO
-
-gset <- getGEO("GSE36133", GSEMatrix =TRUE, getGPL=FALSE)
-if (length(gset) > 1) idx <- grep("GPL15308", attr(gset, "names")) else idx <- 1
-gset <- gset[[idx]]
-
-# group names for all samples in a series
-gsms <- paste0("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXX1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXX0000000000XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX11XXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXX00000X00X000XXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXX",
-               "XXXXXXXXXXXXXXXXX")
-sml <- c()
-for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
-sml <- paste("G", sml, sep="")  # set group names
-
-# eliminate samples marked as "X"
-sel <- which(sml != "GX")
-length(sel)
-
-sml <- sml[sel]
-gset <- gset[ ,sel]
-
 # order samples by group
 ex <- exprs(gset)[ , order(sml)]
 sml <- sml[order(sml)]
 fl <- as.factor(sml)
-labels <- c("SSCC","others")
+labels <- c("others", "SSCC")
 
 # set parameters and draw the plot
 palette(c("#f4dff4","#dff4e4", "#AABBCC"))
@@ -124,4 +98,7 @@ par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
 title <- paste ("GSE36133", '/', annotation(gset), " selected samples", sep ='')
 boxplot(ex, boxwex=0.6, notch=T, main=title, outline=FALSE, las=2, col=fl)
 legend("topleft", labels, fill=palette(), bty="n")
+
+
 save(ex, file= "x:/project2020/MustARD/ESCC/workingWithMicroarray_GSE36133_CCLE/ESCC_GSE36133.rda")
+
