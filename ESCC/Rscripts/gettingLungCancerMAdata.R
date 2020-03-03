@@ -66,9 +66,14 @@ fit2 <- eBayes(fit2, 0.01)
 
 data.lung <- list ("dt"=gset, "dn"= design, "f"= fit, "f2"= fit2)
 save (data.lung, file = "/Users/li11/myGit/MustARD/ESCC/workingWithMicroarray_GSE36133_CCLE/lung_cancer.rda")
-tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 
+tT <- topTable(fit2, adjust="fdr", sort.by="B")
+
+
+tT <- topTable(fit2, adjust="fdr", sort.by="B", number=25000)
+tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","F","ORF"))
+head(tT)
 write.table(tT, file=stdout(), row.names=F, sep="\t")
 
 
@@ -108,7 +113,7 @@ for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
 sml <- paste("G", sml, sep="")  # set group names
 
 # eliminate samples marked as "X"
-sel <- which(sml != "X")
+sel <- which(sml != "GX")
 sml <- sml[sel]
 gset <- gset[ ,sel]
 
@@ -117,6 +122,7 @@ ex <- exprs(gset)[ , order(sml)]
 sml <- sml[order(sml)]
 fl <- as.factor(sml)
 labels <- c("ADC","ADSC","LCC","NSCLC","SCC","Others")
+table(fl)
 
 # set parameters and draw the plot
 palette(c("#dfeaf4","#f4dfdf","#f2cb98","#dcdaa5","#dff4e4","#f4dff4", "#AABBCC"))

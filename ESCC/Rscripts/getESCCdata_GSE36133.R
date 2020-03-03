@@ -3,6 +3,10 @@
 
 ################################################################
 
+##================================
+##  ESCC microarray data
+##================================
+
 
 ##====================================================
 ##  limma fitting
@@ -68,8 +72,9 @@ fit <- lmFit(gset, design)
 cont.matrix <- makeContrasts(G1-G0, levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 fit2 <- eBayes(fit2, 0.01)
-tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 
+
+tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","ORF"))
 head(tT)
 save(tT,file= "x:/project2020/MustARD/ESCC/workingWithMicroarray_GSE36133_CCLE/ESCC_GSE36133_limma_SSCC_vs_others.rda")
@@ -101,4 +106,12 @@ legend("topleft", labels, fill=palette(), bty="n")
 
 
 save(ex, file= "x:/project2020/MustARD/ESCC/workingWithMicroarray_GSE36133_CCLE/ESCC_GSE36133.rda")
+
+
+
+##================================
+##  NSCLC microarray data
+##================================
+
+
 
